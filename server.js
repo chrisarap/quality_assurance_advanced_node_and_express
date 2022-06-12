@@ -34,7 +34,7 @@ myDB(async client => {
   app.route('/').get((req, res) => {
     res.render(
       'pug',
-      {title: 'Connected to Database', message: 'Please login', showLogin: true}
+      {title: 'Connected to Database', message: 'Please login', showLogin: true, showRegistration: true}
     );
   });
 
@@ -52,6 +52,31 @@ myDB(async client => {
         process.cwd() + '/views/pug/profile',
         {username: req.user.username}
       );
+    }
+  );
+
+  app.route('/register').post(
+    (req, res, next) => {
+      myDataBase.findOne({username: req.body.username}, (err, userData) => {
+          if (err) {
+            next(err);
+          } else if (userData) {
+            res.redirect('/');
+          } else {
+            myDataBase.insertOne({ username: req.body.username, password: req.body.password}, (err, doc) => {
+                if(err) {
+                  res.redirect('/');
+                } else {
+                  // ops is a property (arr) of the object added
+                  next(null, doc.ops[0]);
+                }
+            });
+          }
+        });
+    },
+    passport.authenticate('local', { failureRedirect: '/' }),
+    (req, res, next) => {
+      res.redirect('/profile');
     }
   );
 
