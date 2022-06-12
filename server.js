@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.route('/').get((req, res) => {
   res.render(
     process.cwd() + '/views/pug/index',
-    {title: 'Hello', message: 'Please Login'}
+    {title: 'Hello', message: 'Please login'}
   );
 });
 
