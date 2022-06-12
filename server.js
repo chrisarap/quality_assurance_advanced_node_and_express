@@ -46,6 +46,7 @@ myDB(async client => {
   );
 
   app.route('/profile').get(
+    ensureAuthenticated,
     (req, res) => {
       res.render(process.cwd() + '/views/pug/profile');
     }
@@ -93,3 +94,10 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('Listening on port ' + PORT);
 });
+
+const ensureAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+};
